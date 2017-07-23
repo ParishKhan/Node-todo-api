@@ -1,5 +1,6 @@
 // Library Modules
-var  express = require('express');
+var {ObjectID} = require('mongodb');
+var express = require('express');
 var bodyParser = require('body-parser');
 
 // Local Modules
@@ -33,6 +34,21 @@ app.get('/todos', (req, res) => {
     res.status(400).send(e);
   });
 });
+
+// Handle get request for /todos/id
+app.get('/todos/:id', (req, res) => {
+  var id = req.params.id;
+  console.log(id);
+  if(!ObjectID.isValid(id)) return res.status(404).send();
+
+  Todos.findById(id).then((todo) => {
+    if(!id) return res.status(404).send();
+
+    res.status(200).send(todo);
+  }, () => {
+    res.status(400).send();
+  });
+})
 
 // Listening PORT
 app.listen(3000, () => {
