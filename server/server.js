@@ -11,7 +11,7 @@ var {Users} = require('./models/users');
 var app = express(); // New Express App
 
 // Env Variables
-const PORT = process.env.port || 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(bodyParser.json());
