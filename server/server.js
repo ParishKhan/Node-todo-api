@@ -50,6 +50,21 @@ app.get('/todos/:id', (req, res) => {
   }, () => {
     res.status(400).send();
   });
+});
+
+
+// Handle delete request for /todos/id
+app.delete('/todos/:id', (req, res) => {
+  var id = req.params.id;
+  if(!ObjectID.isValid(id)) return res.status(404).send();
+  console.log(id)
+  Todos.findOneAndRemove({_id: id}).then((todo) => {
+    if(!todo) return res.status(404).send();
+
+    res.status(200).send(todo);
+  }, () => {
+    res.status(400).send();
+  })
 })
 
 // Listening PORT
