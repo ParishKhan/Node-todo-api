@@ -1,7 +1,8 @@
 // Library Modules
-var {ObjectID} = require('mongodb');
-var express = require('express');
-var bodyParser = require('body-parser');
+const _ = require('lodash');
+const {ObjectID} = require('mongodb');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 // Local Modules
 var {mongoose} = require('./db/mongoose');
@@ -57,7 +58,6 @@ app.get('/todos/:id', (req, res) => {
 app.delete('/todos/:id', (req, res) => {
   var id = req.params.id;
   if(!ObjectID.isValid(id)) return res.status(404).send();
-  console.log(id)
   Todos.findOneAndRemove({_id: id}).then((todo) => {
     if(!todo) return res.status(404).send();
 
@@ -65,6 +65,27 @@ app.delete('/todos/:id', (req, res) => {
   }, () => {
     res.status(400).send();
   })
+});
+
+// Handle Update request for /todos/id
+app.patch('/todos/:id', (req, res) => {
+  var id = req.params.id;
+  var body = _.pick(req.body, ['text', 'completed']);
+
+  if(!ObjectID.isValid(id)) return res.status(404).send();
+
+  if(_.isBoolean(body.completed) && body.completed) {
+    body.completedAt = new Date().getTime();
+  } else {
+    body.completed = false;
+    body.completedAt = null;
+  }
+ 
+  Todos.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+    if(!todo) return res.status(404).send();
+    res.status(200).send({todo});
+
+  }).catch((err) => res.status(400).send());
 })
 
 // Listening PORT

@@ -11,6 +11,10 @@ var Todos = mongoose.model('Todos', {
     type: Boolean,
     default: false
   },
+  completedAt: {
+    type: Number,
+    default: null
+  },
   createdAt: {
     type: Number,
     default: null
