@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 var {mongoose} = require('./db/mongoose');
 var {Todos} = require('./models/todos');
 var {Users} = require('./models/users');
+var {authenticate} = require('./middlewares/authenticate.js');
 
 var app = express(); // New Express App
 
@@ -106,6 +107,11 @@ app.post('/users', (req, res) => {
     
   }, (err) => res.status(400).send(err))
 });
+
+// Handle User profile route
+app.get('/users/me', authenticate, (req, res) => {
+  res.status(200).send(req.user);
+})
 
 // Listening PORT
 app.listen(PORT, () => {
