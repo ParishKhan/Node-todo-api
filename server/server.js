@@ -87,7 +87,25 @@ app.patch('/todos/:id', (req, res) => {
     res.status(200).send({todo});
 
   }).catch((err) => res.status(400).send());
-})
+});
+
+
+// Handle User POST for /users route
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+
+  var usersave = new Users({
+    email: body.email,
+    password: body.password
+  })
+
+  usersave.save().then((doc) => {
+    return usersave.generateAuthTokens().then((token) => {
+      res.header('x-auth', token).send({doc});
+    });
+    
+  }, (err) => res.status(400).send(err))
+});
 
 // Listening PORT
 app.listen(PORT, () => {
