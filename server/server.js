@@ -102,7 +102,10 @@ app.post('/users', (req, res) => {
 
   usersave.save().then((doc) => {
     return usersave.generateAuthTokens().then((token) => {
-      res.header('x-auth', token).send({doc});
+      res.header('x-auth', token).send({
+        "_id": doc._id,
+        "email": doc.email
+      });
     });
     
   }, (err) => res.status(400).send(err))
