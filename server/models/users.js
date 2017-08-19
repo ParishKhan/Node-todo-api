@@ -47,6 +47,17 @@ UsersSchema.methods.generateAuthTokens = function() {
 }
 
 
+UsersSchema.methods.removeToken = function(token) {
+  var user = this;
+
+  return user.update({
+    $pull: {
+      token: {token}
+    }
+  })
+} 
+
+
 UsersSchema.statics.findByToken = function(token) {
   var Users = this, decodedToken
   
@@ -66,30 +77,6 @@ UsersSchema.statics.findByToken = function(token) {
   }) 
 }
 
-
-// UsersSchema.statics.findByCredentials = function(email, password) {
-//   var User = this;
-
-//   return User.findOne({email}).then((userdata) => {
-//     if(!userdata) return Promise.reject();
-
-//     return new Promise((resolve, reject) => {
-//         bcrypt.compare(password, userdata.password, (err, response) => {
-//           if(response) {
-//             // generate web token and send response
-//             // var access = 'auth';
-//             // var newToken = User.generateAuthTokens();
-//             // userdata.token = newToken;
-
-//             resolve(userdata);
-//           } else {
-//             reject();
-//           }
-//         });
-//     });
-//   });
-  
-// }
 
 UsersSchema.statics.findByCredentials = function(email, password) {
   var Users = this;
