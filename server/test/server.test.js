@@ -312,4 +312,22 @@ describe('POST /users/login', () => {
         }).catch(err => done(err));
       })
   });
+});
+
+
+describe('DELETE /users/me/token', () => {
+  it('Should remove token on valid anthentication token', (done) => {
+    request(app)
+      .delete('/users/me/token')
+      .set('x-auth', usersTest[0].token[0].token)
+      .expect(200)
+      .end((err) => {
+        if(err) done(err);
+
+        Users.findById(usersTest[0]._id).then((user) => {
+          expect(user.token.length).toBe(0);
+          done();
+        }).catch((e) => done(e))
+      })
+  });
 })
