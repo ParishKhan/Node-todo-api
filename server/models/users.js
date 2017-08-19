@@ -66,6 +66,54 @@ UsersSchema.statics.findByToken = function(token) {
   }) 
 }
 
+
+// UsersSchema.statics.findByCredentials = function(email, password) {
+//   var User = this;
+
+//   return User.findOne({email}).then((userdata) => {
+//     if(!userdata) return Promise.reject();
+
+//     return new Promise((resolve, reject) => {
+//         bcrypt.compare(password, userdata.password, (err, response) => {
+//           if(response) {
+//             // generate web token and send response
+//             // var access = 'auth';
+//             // var newToken = User.generateAuthTokens();
+//             // userdata.token = newToken;
+
+//             resolve(userdata);
+//           } else {
+//             reject();
+//           }
+//         });
+//     });
+//   });
+  
+// }
+
+UsersSchema.statics.findByCredentials = function(email, password) {
+  var Users = this;
+  return Users.findOne({email}).then((user) => {
+    if(!user) return Promise.reject();
+
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, user.password, (err, response) => {
+          if(response) {
+            // generate web token and send response
+            // var access = 'auth';
+            // var newToken = User.generateAuthTokens();
+            // userdata.token = newToken;
+
+            resolve(user);
+          } else {
+            reject();
+          }
+        });
+    })
+  })
+}
+
+
 UsersSchema.pre('save', function(next) {
   var user = this;
   if(user.isModified('password')) {

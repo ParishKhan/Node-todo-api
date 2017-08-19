@@ -4,6 +4,8 @@ const _ = require('lodash');
 const {ObjectID} = require('mongodb');
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Local Modules
 var {mongoose} = require('./db/mongoose');
@@ -114,7 +116,39 @@ app.post('/users', (req, res) => {
 // Handle User profile route
 app.get('/users/me', authenticate, (req, res) => {
   res.status(200).send(req.user);
+});
+
+
+// Handle Login
+// app.post('/users/login', (req, res) => {
+//   var body = _.pick(req.body, ['email', 'password']);
+//   var email = body.email;
+//   var password = body.password;
+
+//   Users.findByCredentials(email, password).then((response) => {
+//     res.send(response)
+//   }).catch((err) => {
+//     res.send(err);
+//   })
+// });
+
+// POST /users/login
+app.post('/users/login', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+
+  Users.findByCredentials(body.email, body.password).then((user) => {
+    
+    return user.generateAuthTokens().then((token) => {
+      res.header('x-auth', token).send({
+        "_id": user._id,
+        "email": user.email
+      });
+    })
+  }).catch((e) => {
+    res.status(400).send();
+  })
 })
+
 
 // Listening PORT
 app.listen(PORT, () => {
