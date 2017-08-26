@@ -17,19 +17,25 @@ var usersTest = [{
 }, {
   _id: userTwoId,
   email: 'parish2@gmail.com',
-  password: 'usertwopassword!'
+  password: 'usertwopassword!',
+  token: [{
+    access: 'auth',
+    token: jwt.sign({_id: userTwoId, access: 'auth'}, 'secrets').toString()
+  }]
 }]
 
 
 var todosTest = [{
   _id: new ObjectID,
-  text: "First test todo"
+  text: "First test todo",
+  _creator: userOneId
 },
 {
   _id: new ObjectID,
   text: "Second test todo",
   completed: true,
-  completedAt: 333
+  completedAt: 333,
+  _creator: userTwoId
 }]
 
 
